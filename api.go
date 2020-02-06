@@ -23,7 +23,7 @@ var cityInfo = [5]cityStation{
 }
 
 func main() {
-	startDate := `2019-05-25`
+	//startDate := `2019-05-25`
 	//endDate := `2019-05-31`
 
 	//website := fmt.Sprintf(`https://api.meteostat.net/v1/history/daily?station=%s&start=%s&end=%s&key=%s`, cityInfo[0].Station, //startDate, endDate, userKey)
