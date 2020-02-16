@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 )
 
-const userKey string = "XXXXXXX"
+const userKey string = "XXXXXXXX"
 
 type cityStation struct {
 	City       string
