@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"net/http"
 	"log"
 	"io/ioutil"
 )
@@ -35,20 +34,20 @@ func main() {
 	fmt.Println("IF YOU CAN READ THIS, YOU HAVE COMPILED THE BUILD AND EXECUTED THE FILE SUCCESSFULLY!")
 }
 
-func GetHTTPRequest(website string) (r string) {
-	response, err := http.Get(website)
-	if err != nil {
-		log.Fatal(err)
-	}
+// func GetHTTPRequest(website string) (r string) {
+// 	response, err := http.Get(website)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	defer response.Body.Close()
-	body, err := ioutil.ReadAll(response.Body)
+// 	defer response.Body.Close()
+// 	body, err := ioutil.ReadAll(response.Body)
 
-	if err != nil {
-		r = err.Error()
-	} else {
-		r = string(body)
-	}
+// 	if err != nil {
+// 		r = err.Error()
+// 	} else {
+// 		r = string(body)
+// 	}
 
-	return
-}
+// 	return
+// }
