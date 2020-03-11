@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"database/sql"
 	// "log"
 	// "io/ioutil"
 )
@@ -30,8 +31,32 @@ func main() {
 	//website := fmt.Sprintf(`https://api.meteostat.net/v1/history/daily?station=%s&start=%s&end=%s&key=%s`, cityInfo[0].Station, //startDate, endDate, userKey)
 	//r := GetHTTPRequest(website)
 	
-	fmt.Println("START OF THE PRINT FUNCTION")
-	fmt.Println("IF YOU CAN READ THIS, YOU HAVE COMPILED THE BUILD AND EXECUTED THE FILE SUCCESSFULLY!")
+	fmt.Println("START OF THE API.go FILE")
+
+	injectionTest("Nottingham")
+
+	fmt.Println("END OF THE API.go FILE")
+}
+
+func injectionTest(city string) {
+	db, err := sql.Open("postgres", "postgresql://test:test@test")
+	if err != nil {
+		// return err
+	}
+
+	var count int
+
+	row := db.QueryRow("SELECT COUNT(*) FROM t WHERE city=" + city) //nolint:safesql
+	if err := row.Scan(&count); err != nil {
+		// return err
+	}
+
+	row = db.QueryRow("SELECT COUNT(*) FROM t WHERE city=?", city)
+	if err := row.Scan(&count); err != nil {
+		// return err
+	}
+
+	return
 }
 
 // func GetHTTPRequest(website string) (r string) {
