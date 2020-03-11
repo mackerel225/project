@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	"log"
-	"io/ioutil"
+	// "log"
+	// "io/ioutil"
 )
 
 const userKey string = "XXXXXXXXXXX"
