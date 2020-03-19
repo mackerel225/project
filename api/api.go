@@ -2,29 +2,28 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"database/sql"
-	// "log"
-	// "io/ioutil"
+	"sync" // deadlock testing
+	"sync/atomic" // deadlock testing
+	DLock "../deadlock"
 )
 
-const userKey string = "XXXXXXXXXXX"
+// const userKey string = "XXXXXXXXXXX"
 
-type cityStation struct {
-	City       string
-	Station    string
-}
+// type cityStation struct {
+// 	City       string
+// 	Station    string
+// }
 
-var cityInfo = [5]cityStation{
-	cityStation{"London", "03772"},
-	cityStation{"Cambridge", "03571"},
-	cityStation{"Nottingham", "03354"},
-	cityStation{"Manchester", "03334"},
-	cityStation{"Leeds", "EGNM0"},
-}
+// var cityInfo = [5]cityStation{
+// 	cityStation{"London", "03772"},
+// 	cityStation{"Cambridge", "03571"},
+// 	cityStation{"Nottingham", "03354"},
+// 	cityStation{"Manchester", "03334"},
+// 	cityStation{"Leeds", "EGNM0"},
+// }
 
 func main() {
-	fmt.Println(os.Getenv("GO15VENDOREXPERIMENT"));
 	//startDate := `2019-05-25`
 	//endDate := `2019-05-31`
 
@@ -32,10 +31,52 @@ func main() {
 	//r := GetHTTPRequest(website)
 	
 	fmt.Println("START OF THE API.go FILE")
+	deadlockTest()
 
-	injectionTest("Nottingham")
+	//injectionTest("Nottingham")
+	
 
 	fmt.Println("END OF THE API.go FILE")
+}
+
+func restore() func() {
+	opts := DLock.Opts
+	return func() {
+		DLock.Opts = opts
+	}
+}
+ 
+func deadlockTest() {
+	defer restore()()
+	DLock.Opts.DeadlockTimeout = 0
+	var deadlocks uint32
+	DLock.Opts.OnPotentialDeadlock = func() {
+		atomic.AddUint32(&deadlocks, 1)
+	}
+	var a DLock.RWMutex // RWMutex allows for multiple access calls, whereas writers have to wait for each other
+	var b DLock.Mutex // Allows for only one goroutine to access variable at given time, i.e. Mutual Exclusion
+	var wg sync.WaitGroup // Waits for goroutines to finish
+	wg.Add(1)
+	go func() {
+		defer wg.Done() // Done means the gorotuine has finished and will remove one counter from WaitGroup
+		a.Lock()
+		b.Lock()
+		b.Unlock()
+		a.Unlock()
+	}()
+	wg.Wait()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		b.Lock()
+		a.RLock()
+		a.RUnlock()
+		b.Unlock()
+	}()
+	wg.Wait()
+	if atomic.LoadUint32(&deadlocks) != 1 {
+		fmt.Println("expected 1 deadlock, detected", deadlocks)
+	}
 }
 
 func injectionTest(city string) {
