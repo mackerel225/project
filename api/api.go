@@ -31,7 +31,7 @@ func main() {
 	//r := GetHTTPRequest(website)
 	
 	fmt.Println("START OF THE API.go FILE")
-	deadlockTest()
+	//deadlockTest()
 
 	injectionTest("Nottingham")
 	
@@ -80,7 +80,6 @@ func deadlockTest() {
 }
 
 func injectionTest(city string) {
-	return
 	db, err := sql.Open("postgres", "postgresql://test:test@test")
 	if err != nil {
 		// return err
