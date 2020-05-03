@@ -7,8 +7,8 @@ import (
 
 
 func main() {
-	username := "admin" // #nosec
-	password := "pa34ssw54ord123" // #nosec
+	username := "admin"
+	password := "pa34ssw54ord123"
 
 	fmt.Println("Printing hardcoded credentials [1].. ", username, password)
 
